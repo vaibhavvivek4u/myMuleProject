@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	
+	
+	<flow name="getHotelsFlowImpl" doc:id="82747eb7-d3bb-4c85-909c-47860b305ac6" >
+		<db:select doc:name="Select" doc:id="fd8f6d9c-55a2-4813-a687-8c4e1b73d141" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from oyohotels where city =:city_value]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	city_value: attributes.queryParams.city
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="051e2347-6e17-4247-9d18-7673cafc5d4a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	ID: payload01.ID default 0,
+	pincode: payload01.pincode default 0,
+	pricePerDay: payload01.basePricePerDay default 0,
+	hotelName: payload01.name default "",
+	address: payload01.address default "",
+	city: payload01.city default "",
+	emptyRooms: payload01.roomsAvailable default 0,
+	room: {
+		"type": payload01.roomType default "",
+		bedSize: payload01.bedType default "",
+		temperatureControl: payload01.AirConditioner as Boolean default true
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ac23e091-e69a-4e34-8760-932195e2f406" message="end of getHotelsFlowImpl"/>
+	</flow>
+	<flow name="getHotelsByIdImplFlow" doc:id="1f9c134a-c000-4712-84d1-834529a5802a" >
+		<db:select doc:name="Select" doc:id="e6c29087-3485-46cb-a416-7b26a64b5dd5" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from oyohotels where ID = :ID_value]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+ ID_value: attributes.uriParams.hotelId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="5160537d-c5a0-44d9-8e21-18bab1b17a97" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var data=payload map ( payload01 , indexOfPayload01 ) -> {
+	ID: payload01.ID default 0,
+	pincode: payload01.pincode default 0,
+	pricePerDay: payload01.basePricePerDay default 0,
+	hotelName: payload01.name default "",
+	address: payload01.address default "",
+	city: payload01.city default "",
+	emptyRooms: payload01.roomsAvailable default 0,
+	room: {
+		"type": payload01.roomType default "",
+		bedSize: payload01.bedType default "",
+		temperatureControl: payload01.AirConditioner as Boolean default true
+	}
+}
+var test="just for testing"
+---
+data[0]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b7708ea7-d5ba-4b03-b0c7-fd6d92b0069c" message="end of getHotelsByIdImplFlow"/>
+	</flow>
+	<flow name="updateHotelsByIdFlowImpl" doc:id="ff595c5b-23ee-4ed5-8805-9796a8928b69" >
+		<db:update doc:name="Update" doc:id="981d042f-a44d-46d7-8bf8-e99180fbbb05" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE oyohotels SET pincode = :pincode , basePricePerDay = :basePricePerDay,name = :name , address = :address,city = :city ,roomsAvailable = :roomsAvailable , roomType= :roomType, bedType = :bedType,AirConditioner = :AirConditioner
+where ID = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+    ID: attributes.uriParams.hotelId,
+    pincode: payload.pincode,
+	basePricePerDay: payload.pricePerDay,
+	name: payload.hotelName,
+	address: payload.address,
+	city: payload.city,
+	roomsAvailable: payload.emptyRooms,
+	roomType: payload.room.'type',
+	bedType: payload.room.bedsize,
+	AirConditioner: payload.room.temperatureControl as String
+
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="08e1adc6-f332-4360-a3c4-c3d77f88c3b4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: if(payload.affectedRows==1)
+	      "Hotel is Updated"
+	      else
+	      " Hotel is not Updated"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="deleteHotelsByIdFlowImpl" doc:id="a338dbd5-3a3d-4df3-bd5c-908b3a2bbbb7" >
+		<set-variable value="#[attributes.uriParams.hotelId]" doc:name="Set Variable" doc:id="cd92f239-d44f-4010-a8a6-78ae04a9cf61" variableName="hotelId"/>
+		<db:delete doc:name="Delete" doc:id="224476e7-bc69-474f-b6bf-f21a334df811" config-ref="Database_Config">
+			<db:sql ><![CDATA[Delete from oyohotels where Id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	ID: vars.hotelId
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="6e9c9787-c832-41e1-9a71-fef832f08935" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: if(payload ==1)
+	        "Hotel with ID " ++(vars.hotelId default "")++ " is deleted"
+	        else
+	        "Hotel with ID " ++(vars.hotelId default "")++ " is not deleted"
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="postHotelsFlowImpl" doc:id="82c1a4db-6fcd-4ae1-aef3-10a5c12aa2c6" >
+		<db:insert doc:name="Insert" doc:id="56d7d154-c68f-4514-a3f7-9ce5a8af3f27" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into oyohotels(ID,pincode,basePricePerDay,name,address,city,roomsAvailable,roomType,bedType,AirConditioner)
+values(:ID,:pincode,:basePricePerDay,:name,:address,:city,:roomsAvailable,:roomType,:bedType,:AirConditioner)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	ID: payload.ID,
+	pincode: payload.pincode,
+	basePricePerDay: payload.pricePerDay,
+	name: payload.hotelName,
+	address: payload.address,
+	city: payload.city,
+	roomsAvailable: payload.emptyRooms,
+	roomType: payload.room.'type',
+	bedType: payload.room.bedsize,
+	AirConditioner: payload.room.temperatureControl as String
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="c638c118-7cef-465a-b9b2-52dc31aebe92" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: if(payload.affectedRows == 1)
+	          "Hotel is Created"
+	          else
+	          "Hotel is not Created"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="discountHotelflowImpl" doc:id="e2783769-1ebd-45fd-aa80-e2ea3f8b4934" >
+		<db:select doc:name="Select" doc:id="c22ece46-d2bc-445e-abf7-f621dfd8d719" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from discount;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="e289b837-dcb3-4f5c-8eaa-105c8f017f89" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	name: payload01.name default 0,
+	description: payload01.description default 0
+	
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

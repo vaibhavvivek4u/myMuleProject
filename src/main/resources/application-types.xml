@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="output_json" format="json">
+      <types:shape format="weave" example="examples/HotelsExample.json"><![CDATA[%dw 2.0
+
+type output_json = Array<{|  ID: Number {"typeId": "int"},   pincode: Number {"typeId": "int"},   pricePerDay: Number {"typeId": "int"},   hotelName: String,   address: String,   city: String,   emptyRooms: Number {"typeId": "int"},   room: {|    "type": String,     bedSize: String,     temperatureControl: Boolean  |}|}> {"example": "[{\\\"ID\\\":1,\\\"pincode\\\":560029,\\\"pricePerDay\\\":3500,\\\"hotelName\\\":\\\"Oyo 1123 Mayura Nandan\\\",\\\"address\\\":\\\"1-3\\/32, 3rd street, Anand Nagar\\\",\\\"city\\\":\\\"Bangalore\\\",\\\"emptyRooms\\\":10,\\\"room\\\":{\\\"type\\\":\\\"Standard\\\",\\\"bedSize\\\":\\\"King\\\",\\\"temperatureControl\\\":true}},{\\\"ID\\\":2,\\\"pincode\\\":560033,\\\"pricePerDay\\\":2500,\\\"hotelName\\\":\\\"Oyo 1124 Sundar Sadan\\\",\\\"address\\\":\\\"2-3\\/22, 3rd street, Vasanth Nagar\\\",\\\"city\\\":\\\"Bangalore\\\",\\\"emptyRooms\\\":10,\\\"room\\\":{\\\"type\\\":\\\"Standard\\\",\\\"bedSize\\\":\\\"King\\\",\\\"temperatureControl\\\":true}}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#3d3c0560-f73c-45ad-aace-47d7717b8859">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#174611de-cbf5-4a6a-afeb-1b6b20a329d4">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#051e2347-6e17-4247-9d18-7673cafc5d4a">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#5160537d-c5a0-44d9-8e21-18bab1b17a97">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="output_json"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="output_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
