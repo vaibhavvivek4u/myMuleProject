@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<munit:config name="interface-test-suite.xml" />
+	<munit:test name="getOyoHotelswithId-TestNullAndNotNullValues" doc:id="b0113d96-1b7d-4037-9446-00181ae6785a" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b6c6253c-0ee0-477b-8e35-1273656a2e87" >
+				<munit:attributes value="{&#10;uriParams : {&#10;   hotelId : '2'&#10;   }&#10;}" mediaType="application/dw" />
+				
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\hotels\(hotelId):oyo-hotels-rest-api-config" doc:id="6a10c3fc-1b1e-4e46-8bf0-b865a1afb4fc" name="get:\hotels\(hotelId):oyo-hotels-rest-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="fdc705da-1930-481f-8096-130fb579f5fa" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8b483b21-6957-42d6-b4aa-cd384368d74c" is="#[MunitTools::nullValue()]" expression="#[attributes]" message="failed during attributes"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f951167f-d19d-4c9e-8052-dd15a5e4f990" expression="#[error]" is="#[MunitTools::nullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="983760fb-3539-4a1b-acf2-b7d05fa1fe51" expression="#[sizeOf(payload)]" is="#[MunitTools::greaterThan(0)]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:after-test name="interface-test-suiteAfter_Test" doc:id="1cd17ab4-8fea-4663-9599-1679b5a090f2" >
+		<logger level="INFO" doc:name="Logger" doc:id="8c45206d-5544-4dff-a725-09349760b79c" message="End of the test case"/>
+	</munit:after-test>
+	<munit:test name="getOyoHotelById-withMediaType" doc:id="fa090cdd-73f6-417e-b877-132c786cc191" >
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="eddec362-f211-42fd-8ce3-63b022e28449">
+				<munit:attributes value="{&#10;uriParams : {&#10;   hotelId : '2'&#10;   }&#10;}" mediaType="application/dw" />
+			</munit:set-event>
+			<flow-ref doc:name="get:\hotels\(hotelId):oyo-hotels-rest-api-configs" doc:id="27b791b2-beda-4274-95fb-c1c6664dc001" name="get:\hotels\(hotelId):oyo-hotels-rest-api-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="73905064-3c83-454e-8619-59bdf4ae4a47" is='#[MunitTools::withMediaType("application/json")]' expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getOyoHotelByCity-checkNullAndNotNullValues" doc:id="c39f9e52-a2ed-4df3-aa7b-f08465d72f4d" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="495e1e2f-2b5d-4e02-80b0-d9fff64c925b" >
+				<munit:attributes value='{&#10;queryParams:{&#10;     city: "Bangalore"&#10;}&#10;}' mediaType="application/dw" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to get:\hotels:oyo-hotels-rest-api-config" doc:id="00661b25-fe3a-4107-afe7-79aa113095d2" name="get:\hotels:oyo-hotels-rest-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="74f43e95-e20c-4753-abaf-4647daf8b6a8" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1e2a39bc-ff3a-476a-bfde-d7f43ce8f189" is="#[MunitTools::nullValue()]" expression="#[attributes]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="23bf10b8-2f7f-4077-a433-e4169de2c1fb" expression="#[error]" is="#[MunitTools::nullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ce43c381-65c1-4d36-b065-2a13c9287d6a" expression="#[sizeOf(payload)]" is="#[MunitTools::greaterThan(0)]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

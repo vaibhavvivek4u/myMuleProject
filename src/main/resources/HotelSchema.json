@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+      {
+          "ID": 2,
+          "pincode": 560032,
+          "pricePerDay": 3420,
+          "hotelName": "Oyo 2232 Munne Kesha",
+          "address": "3/44, 2nd street, Chanda Nagar",
+          "city": "Bangalore",
+          "emptyRooms": 22,
+          "room": {
+              "type": "Standard",
+              "bedSize": "Queen",
+              "temperatureControl": true
+          }
+      }
+  ],
+  "required": [
+      "ID",
+      "pincode",
+      "pricePerDay",
+      "hotelName",
+      "address",
+      "city",
+      "emptyRooms",
+      "room"
+  ],
+  "properties": {
+      "ID": {
+          "$id": "#/properties/ID",
+          "type": "integer",
+          "title": "The ID schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0,
+          "examples": [
+              2
+          ]
+      },
+      "pincode": {
+          "$id": "#/properties/pincode",
+          "type": "integer",
+          "title": "The pincode schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0,
+          "examples": [
+              560032
+          ]
+      },
+      "pricePerDay": {
+          "$id": "#/properties/pricePerDay",
+          "type": "integer",
+          "minimum": 500,
+          "title": "The pricePerDay schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0,
+          "examples": [
+              3420
+          ]
+      },
+      "hotelName": {
+          "$id": "#/properties/hotelName",
+          "type": "string",
+          "title": "The hotelName schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": "",
+          "examples": [
+              "Oyo 2232 Munne Kesha"
+          ]
+      },
+      "address": {
+          "$id": "#/properties/address",
+          "type": "string",
+          "title": "The address schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": "",
+          "examples": [
+              "3/44, 2nd street, Chanda Nagar"
+          ]
+      },
+      "city": {
+          "$id": "#/properties/city",
+          "type": "string",
+          "title": "The city schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": "",
+          "examples": [
+              "Bangalore"
+          ]
+      },
+      "emptyRooms": {
+          "$id": "#/properties/emptyRooms",
+          "type": "integer",
+          "title": "The emptyRooms schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": 0,
+          "examples": [
+              22
+          ]
+      },
+      "room": {
+          "$id": "#/properties/room",
+          "type": "object",
+          "title": "The room schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": {},
+          "examples": [
+              {
+                  "type": "Standard",
+                  "bedSize": "Queen",
+                  "temperatureControl": true
+              }
+          ],
+          "required": [
+              "type",
+              "bedSize",
+              "temperatureControl"
+          ],
+          "properties": {
+              "type": {
+                  "$id": "#/properties/room/properties/type",
+                  "type": "string",
+                  "title": "The type schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "",
+                  "examples": [
+                      "Standard"
+                  ]
+              },
+              "bedSize": {
+                  "$id": "#/properties/room/properties/bedSize",
+                  "type": "string",
+                  "title": "The bedSize schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": "",
+                  "examples": [
+                      "Queen"
+                  ]
+              },
+              "temperatureControl": {
+                  "$id": "#/properties/room/properties/temperatureControl",
+                  "type": "boolean",
+                  "title": "The temperatureControl schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": false,
+                  "examples": [
+                      true
+                  ]
+              }
+          },
+          "additionalProperties": true
+      }
+  },
+  "additionalProperties": true
+}

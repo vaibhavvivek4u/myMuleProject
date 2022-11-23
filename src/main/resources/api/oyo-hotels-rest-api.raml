@@ -1,0 +1,182 @@
+#%RAML 1.0
+title: OYO Hotels REST API
+baseUri: http://oyo-hotels-rest-api-vv-proxy.us-e2.cloudhub.io/
+  
+
+types:
+  Hotel: !include dataTypes/HotelDataType.raml
+  Discount: !include dataTypes/DiscountDataType.raml
+
+traits:
+  error_response_401: !include traits/UnauthorizedResponseTrait.raml
+  error_response_500:
+    responses:
+      500:
+          body:
+            application/json:
+              example:
+                message: Something went wrong try later
+  error_response_400:
+    responses:
+      400:
+          body:
+            application/json:
+              example:
+                message: Bad Request
+
+securitySchemes:
+  cust_auth:
+    description: sdksldkksjsk
+    type:  x-client-id
+    describedBy:
+      headers:
+        client_id:
+          required: true
+          type: string 
+        client_secret:
+          required: true
+          type: string  
+  apikey:
+    description: Admins,contact sales for the apikey
+    type: x-apikey
+    describedBy:
+      headers:
+        apikey:
+          required: true
+          type: string
+          example: aslkdjguuuu
+
+      
+  basic_auth:
+    type: Basic Authentication
+    description: You Can get the username password from salaes@company.com
+    describedBy:
+      headers:
+        authorization:
+          required: true
+          type: string
+          example: Basic YWfhYTpiYmJi   
+
+securedBy:
+  - cust_auth
+    
+
+/hotels:
+  is:
+      - error_response_401
+      - error_response_500
+      - error_response_400
+  get:
+    queryParameters:
+      city:
+        type: string
+        required: true
+        example: Bangalore
+        enum:
+          - Bangalore
+          - Mumbai
+          - Delhi
+          - Hyderabad
+      startDate:
+        required: false
+        type: string
+        pattern: ^(([0-9])|([0-2][0-9])|([3][0-1])) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|oct|Nov|Dec) \d{4}$
+        example: 06 Jun 2021
+      endDate:
+        required: false
+        type: string
+        pattern: ^(([0-9])|([0-2][0-9])|([3][0-1])) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|oct|Nov|Dec) \d{4}$
+        example: 18 Jun 2021
+      priceUnder:
+        type: integer
+        required: false
+        minimum: 1000
+        maximum: 1000000
+        default: 2000 
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/HotelsExample.raml
+            type: Hotel[]
+            
+         
+  post:
+    is:
+      - error_response_400
+         
+    body:
+      application/json:
+        example: !include examples/HotelExample.raml
+        type: Hotel  
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: Hotel is Created   
+
+  /discounts:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/DiscountsExample.raml
+                type: Discount[]
+          
+
+  /{hotelId}:
+    is:
+      - error_response_401
+      - error_response_500
+    get:
+      
+
+      responses:
+        200:
+          headers:
+            timetaken:
+              description: Time taken to proces the request.time is in millis
+              example: 10
+              type: integer
+        500:
+          body:
+            application/json:
+              example:
+                message: Something went wrong try later  
+        401:
+          body:
+            application/json:
+              example:
+                message:Either username and/or password incorrect                
+    
+
+                
+                                    
+                    
+    
+    put:
+      is:
+        - error_response_400
+     
+      body:
+        application/json:
+          example: !include examples/HotelExample.raml
+          type: Hotel  
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: Hotel is updated Successfully 
+    delete:
+      
+          
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                messsage: Hotel with 123 has been deleted
+                     
